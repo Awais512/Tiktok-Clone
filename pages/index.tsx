@@ -1,9 +1,16 @@
+import axios from "axios";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
+import { Video } from "../types";
 
-const Home: NextPage = () => {
+interface IProps {
+  videos: Video[];
+}
+
+const Home = ({ videos }: IProps) => {
+  console.log(videos);
   return (
     <div>
       <Head>
@@ -15,6 +22,16 @@ const Home: NextPage = () => {
       <h1 className="text-red-500">Hello</h1>
     </div>
   );
+};
+
+export const getServerSideProps = async () => {
+  const { data } = await axios.get(`http://localhost:3000/api/post`);
+
+  return {
+    props: {
+      videos: data,
+    },
+  };
 };
 
 export default Home;
