@@ -6,7 +6,6 @@ import Link from "next/link";
 import { HiVolumeUp, HiVolumeOff } from "react-icons/hi";
 import { BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
-import { BsPlay } from "react-icons/bs";
 
 interface IProps {
   post: Video;
@@ -28,6 +27,12 @@ const VideoCard: NextPage<IProps> = ({ post }) => {
       setPlaying(true);
     }
   };
+
+  useEffect(() => {
+    if (videoRef?.current) {
+      videoRef.current.muted = isVideoMuted;
+    }
+  }, [isVideoMuted]);
 
   return (
     <div className="flex flex-col border-b-2 border-gray-200 pb-6">
