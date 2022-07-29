@@ -1,7 +1,7 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { client } from "../../utils/client";
 import { uuid } from "uuidv4";
+
+import { client } from "../../utils/client";
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,8 +9,9 @@ export default async function handler(
 ) {
   if (req.method === "PUT") {
     const { userId, postId, like } = req.body;
+
     const data = like
-      ? client
+      ? await client
           .patch(postId)
           .setIfMissing({ likes: [] })
           .insert("after", "likes[-1]", [
@@ -22,7 +23,7 @@ export default async function handler(
           .commit()
       : await client
           .patch(postId)
-          .unset([`likesp[_ref=="${userId}"]`])
+          .unset([`likes[_ref=="${userId}"]`])
           .commit();
 
     res.status(200).json(data);
