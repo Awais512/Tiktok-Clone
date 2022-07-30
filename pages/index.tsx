@@ -1,10 +1,10 @@
+import React from "react";
 import axios from "axios";
 
-import NoResult from "../components/NoResult";
 import VideoCard from "../components/VideoCard";
-
-import { Video } from "../types";
 import { BASE_URL } from "../utils";
+import { Video } from "../types";
+import NoResults from "../components/NoResult";
 
 interface IProps {
   videos: Video[];
@@ -14,22 +14,30 @@ const Home = ({ videos }: IProps) => {
   return (
     <div className="flex flex-col gap-10 videos h-full">
       {videos.length ? (
-        videos.map((video: Video) => <VideoCard post={video} key={video._id} />)
+        videos?.map((video: Video) => (
+          <VideoCard post={video} isShowingOnHome key={video._id} />
+        ))
       ) : (
-        <NoResult text={"No Videos"} />
+        <NoResults text={`No Videos`} />
       )}
     </div>
   );
 };
 
-export const getServerSideProps = async () => {
-  const { data } = await axios.get(`${BASE_URL}/post`);
+export default Home;
+
+export const getServerSideProps = async ({
+  query: { topic },
+}: {
+  query: { topic: string };
+}) => {
+  let response = await axios.get(`${BASE_URL}/post`);
+
+  if (topic) {
+    response = await axios.get(`${BASE_URL}/discover/${topic}`);
+  }
 
   return {
-    props: {
-      videos: data,
-    },
+    props: { videos: response.data },
   };
 };
-
-export default Home;
