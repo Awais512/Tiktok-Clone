@@ -4,14 +4,15 @@ import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { HiVolumeUp, HiVolumeOff } from "react-icons/hi";
-import { BsFillPlayFill, BsFillPauseFill } from "react-icons/bs";
+import { BsFillPlayFill, BsFillPauseFill, BsPlay } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 
 interface IProps {
   post: Video;
+  isShowingOnHome?: boolean;
 }
 
-const VideoCard: NextPage<IProps> = ({ post }) => {
+const VideoCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
   const [isHover, setIsHover] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
@@ -33,6 +34,31 @@ const VideoCard: NextPage<IProps> = ({ post }) => {
       videoRef.current.muted = isVideoMuted;
     }
   }, [isVideoMuted]);
+
+  if (!isShowingOnHome) {
+    return (
+      <div>
+        <Link href={`/detail/${post._id}`}>
+          <video
+            loop
+            src={post.video.asset.url}
+            className="w-[250px] md:w-full rounded-xl cursor-pointer"
+          ></video>
+        </Link>
+        <div className="flex gap-2 -mt-8 items-center ml-4">
+          <p className="text-white text-lg font-medium flex gap-1 items-center">
+            <BsPlay className="text-2xl" />
+            {post.likes?.length || 0}
+          </p>
+        </div>
+        <Link href={`/detail/${post._id}`}>
+          <p className="mt-5 text-md text-gray-800 cursor-pointer w-210">
+            {post.caption}
+          </p>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col border-b-2 border-gray-200 pb-6">
